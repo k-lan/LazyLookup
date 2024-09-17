@@ -1,0 +1,39 @@
+{
+  "manifest_version": 3,
+  "name": "LazyLookup",
+  "version": "1.0",
+  "description": "Quick translation and word explanation for language learners",
+  "permissions": ["activeTab", "storage"],
+  "host_permissions": ["https://api.openai.com/*"],
+  "action": {
+    "default_popup": "popup.html"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": [
+        "kuromoji.js",
+        "content.js"
+      ]
+    }
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "options_page": "options.html",
+  "commands": {
+    "translate-text": {
+      "suggested_key": {
+        "default": "Alt+Z",
+        "mac": "Alt+Z"
+      },
+      "description": "Translate selected text"
+    }
+  },
+  "web_accessible_resources": [
+    {
+      "resources": ["dict/*"],
+      "matches": ["<all_urls>"]
+    }
+  ]
+}

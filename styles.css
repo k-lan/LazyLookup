@@ -1,0 +1,69 @@
+body {
+  width: 200px;
+  background-color: black;
+  color: white;
+  font-family: Arial, sans-serif;
+  padding: 10px;
+  font-size: 14px; /* Base font size for the body */
+}
+
+#popup-content {
+  text-align: center;
+}
+
+h1 {
+  font-size: 18px; /* Adjust the size of the heading */
+  margin-bottom: 10px;
+}
+
+p {
+  font-size: 12px; /* Adjust the size of the paragraph text */
+  margin-bottom: 10px;
+}
+
+/* Styles for the translation popup */
+#lazy-lookup-popup {
+  font-size: 14px; /* Base font size for the translation popup */
+  display: flex;
+  flex-direction: column;
+}
+
+#lazy-lookup-popup div {
+  margin-bottom: 8px;
+}
+
+#lazy-lookup-popup button {
+  font-size: 12px;
+  padding: 5px 10px;
+}
+
+.lazy-lookup-popup .original-text,
+.lazy-lookup-popup .translated-text {
+  margin-bottom: 10px;
+}
+
+.lazy-lookup-popup .word-explanation {
+  border-top: 1px solid #444;
+  padding-top: 10px;
+  margin-top: 10px;
+}
+
+.lazy-lookup-popup .word-explanation h3 {
+  font-size: 16px;
+  margin-bottom: 5px;
+}
+
+.lazy-lookup-popup .word-explanation p {
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.clickable-word {
+  cursor: pointer;
+  text-decoration: underline;
+  color: #007bff;
+}
+
+.clickable-word:hover {
+  color: #0056b3;
+}
