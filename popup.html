@@ -3,11 +3,44 @@
 <head>
   <title>LazyLookup</title>
   <link rel="stylesheet" type="text/css" href="styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 </head>
 <body>
   <div id="popup-content">
-    <h1>LazyLookup</h1>
+    <h1>LazyLookup <i class="fas fa-cog" id="settings-icon"></i></h1>
     <p>Press Alt+Z to translate selected text.</p>
+  </div>
+  <div id="options-panel" style="display: none;">
+    <h2>Quick Settings</h2>
+    <label for="quick-language">Translate to:</label>
+    <select id="quick-language" name="quick-language">
+      <option value="Japanese">Japanese</option>
+      <option value="English">English</option>
+      <option value="Spanish">Spanish</option>
+      <option value="German">German</option>
+      <option value="French">French</option>
+    </select>
+    
+    <label for="quick-languageResponse">Explain in:</label>
+    <select id="quick-languageResponse" name="quick-languageResponse">
+      <option value="English">English</option>
+      <option value="Japanese">Japanese</option>
+      <option value="Spanish">Spanish</option>
+      <option value="German">German</option>
+      <option value="French">French</option>
+    </select>
+    
+    <label for="quick-languageAbility">Explanation Level:</label>
+    <select id="quick-languageAbility" name="quick-languageAbility">
+      <option value="A1">A1 (Beginner)</option>
+      <option value="A2">A2 (Elementary)</option>
+      <option value="B1">B1 (Intermediate)</option>
+      <option value="B2">B2 (Upper Intermediate)</option>
+      <option value="C1">C1 (Advanced)</option>
+      <option value="C2">C2 (Proficient)</option>
+    </select>
+    
+    <button id="quick-save">Save</button>
   </div>
   <script src="popup.js"></script>
 </body>

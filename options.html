@@ -2,11 +2,92 @@
 <html>
 <head>
   <title>LazyLookup Options</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: black;
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .container {
+      width: 300px;
+      padding: 20px;
+      background-color: #222;
+      border-radius: 10px;
+    }
+    h1, h2 {
+      text-align: center;
+    }
+    label {
+      display: block;
+      margin-top: 10px;
+    }
+    input, select {
+      width: 100%;
+      padding: 5px;
+      margin-bottom: 10px;
+      background-color: #333;
+      color: white;
+      border: 1px solid #444;
+    }
+    button {
+      width: 100%;
+      padding: 10px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+  </style>
 </head>
 <body>
-  <label for="apiKey">OpenAI API Key:</label>
-  <input type="text" id="apiKey" name="apiKey">
-  <button id="save">Save</button>
+  <div class="container">
+    <h1>LazyLookup Options</h1>
+    
+    <label for="apiKey">OpenAI API Key:</label>
+    <input type="password" id="apiKey" name="apiKey">
+    
+    <h2>Sentence Translation</h2>
+    <label for="language">Translate sentence to:</label>
+    <select id="language" name="language">
+      <option value="Japanese">Japanese</option>
+      <option value="English">English</option>
+      <option value="Spanish">Spanish</option>
+      <option value="German">German</option>
+      <option value="French">French</option>
+    </select>
+    
+    <h2>Word Explanation</h2>
+    <label for="languageResponse">Explain word in:</label>
+    <select id="languageResponse" name="languageResponse">
+      <option value="English">English</option>
+      <option value="Japanese">Japanese</option>
+      <option value="Spanish">Spanish</option>
+      <option value="German">German</option>
+      <option value="French">French</option>
+    </select>
+    
+    <label for="languageAbility">Explanation Level:</label>
+    <select id="languageAbility" name="languageAbility">
+      <option value="A1">A1 (Beginner)</option>
+      <option value="A2">A2 (Elementary)</option>
+      <option value="B1">B1 (Intermediate)</option>
+      <option value="B2">B2 (Upper Intermediate)</option>
+      <option value="C1">C1 (Advanced)</option>
+      <option value="C2">C2 (Proficient)</option>
+    </select>
+    
+    <button id="save">Save</button>
+  </div>
+  
   <script src="options.js"></script>
 </body>
 </html>

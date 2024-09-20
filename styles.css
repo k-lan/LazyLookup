@@ -1,5 +1,5 @@
 body {
-  width: 200px;
+  width: 250px;
   background-color: black;
   color: white;
   font-family: Arial, sans-serif;
@@ -21,20 +21,49 @@ p {
   margin-bottom: 10px;
 }
 
-/* Styles for the translation popup */
-#lazy-lookup-popup {
-  font-size: 14px; /* Base font size for the translation popup */
-  display: flex;
-  flex-direction: column;
+#settings-icon {
+  cursor: pointer;
+  float: right;
 }
 
-#lazy-lookup-popup div {
-  margin-bottom: 8px;
+#options-panel {
+  margin-top: 20px;
+  border-top: 1px solid #444;
+  padding-top: 10px;
 }
 
-#lazy-lookup-popup button {
+#options-panel h2 {
+  font-size: 16px;
+  margin-bottom: 10px;
+}
+
+#options-panel label {
+  display: block;
+  margin-top: 10px;
   font-size: 12px;
-  padding: 5px 10px;
+}
+
+#options-panel select {
+  width: 100%;
+  padding: 5px;
+  margin-bottom: 10px;
+  background-color: #333;
+  color: white;
+  border: 1px solid #444;
+}
+
+#options-panel button {
+  width: 100%;
+  padding: 8px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+#options-panel button:hover {
+  background-color: #0056b3;
 }
 
 .lazy-lookup-popup .original-text,
@@ -66,4 +95,16 @@ p {
 
 .clickable-word:hover {
   color: #0056b3;
+}
+
+.translated-word {
+  display: inline-block;
+  padding: 2px 4px;
+  transition: background-color 0.3s ease, border-radius 0.3s ease;
+  border-radius: 3px;
+}
+
+.translated-word:hover {
+  background-color: rgba(128, 128, 128, 0.3); /* Soft grey with 30% opacity  128, 128, 128, 0.3*/
+  border-radius: 3px;
 }

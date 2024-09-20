@@ -26,10 +26,15 @@ function showTranslationPopup(originalText, translatedText) {
   // Separate Japanese words and make them clickable
   const separatedOriginal = separateJapaneseWords(originalText);
   
+  // Wrap each word in the translated text with a span
+  const wrappedTranslatedText = translatedText.split(' ').map(word => 
+    `<span class="translated-word">${word}</span>`
+  ).join(' ');
+  
   // Add original (with clickable words) and translated text
   popup.innerHTML = `
     <div class="original-text">Original: ${separatedOriginal}</div>
-    <div class="translated-text">Translated: ${translatedText}</div>
+    <div class="translated-text">Translated: ${wrappedTranslatedText}</div>
     <div class="word-explanation"></div>
   `;
 
@@ -74,6 +79,24 @@ function showTranslationPopup(originalText, translatedText) {
       font-size: 12px;
       padding: 5px 10px;
     }
+    .translated-word {
+      display: inline-block;
+      padding: 2px 4px;
+      transition: background-color 0.3s ease, border-radius 0.3s ease;
+      border-radius: 3px;
+    }
+    .translated-word:hover {
+      background-color: rgba(128, 128, 128, 0.3);
+      border-radius: 3px;
+    }
+    .clickable-word {
+      cursor: pointer;
+      text-decoration: underline;
+      color: #007bff;
+    }
+    .clickable-word:hover {
+      color: #0056b3;
+    }
   `;
   document.head.appendChild(style);
 }
@@ -95,7 +118,8 @@ function separateJapaneseWords(text) {
 async function handleWordClick(event) {
   if (event.target.classList.contains('clickable-word')) {
     const word = event.target.textContent;
-    const explanation = await getWordExplanation(word);
+    const sentence = event.target.closest('.original-text').textContent;
+    const explanation = await getWordExplanation(word, sentence);
     showWordExplanation(word, explanation);
   }
 }
@@ -117,10 +141,10 @@ function showWordExplanation(word, explanation) {
 }
 
 // Function to get word explanation from OpenAI
-async function getWordExplanation(word) {
+async function getWordExplanation(word, sentence) {
   // Send message to background script to make API call
   return new Promise((resolve) => {
-    chrome.runtime.sendMessage({action: "explainWord", word: word}, (response) => {
+    chrome.runtime.sendMessage({action: "explainWord", word: word, sentence: sentence}, (response) => {
       resolve(response.explanation);
     });
   });
