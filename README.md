@@ -33,12 +33,13 @@ LazyLookup is a Chrome extension designed to help language learners, particularl
 
 ## TODO List
 
-- [ ] Implement single word explanations with example sentences
+- [x] Implement single word explanations with example sentences
 - [ ] Implement better error handling for API calls
-- [ ] Add support for other language pairs
-- [ ] Improve UI/UX of the popup window
+- [x] Add support for other language pairs
+- [x] Improve UI/UX of the popup window
 - [ ] Implement a history feature to review past translations
 - [ ] Add support for text-to-speech for pronunciation practice
+- [ ] Fix word hover in the popup window
 
 ## Credits
 
