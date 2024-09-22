@@ -80,22 +80,17 @@ function showTranslationPopup(originalText, translatedText) {
       padding: 5px 10px;
     }
     .translated-word {
-      display: inline-block;
-      padding: 2px 4px;
-      transition: background-color 0.3s ease, border-radius 0.3s ease;
-      border-radius: 3px;
-    }
-    .translated-word:hover {
-      background-color: rgba(128, 128, 128, 0.3);
+      display: inline;
       border-radius: 3px;
     }
     .clickable-word {
-      cursor: pointer;
-      text-decoration: underline;
-      color: #007bff;
+      display: inline;
+      transition: background-color 0.3s ease, border-radius 0.3s ease;
+      border-radius: 3px;
     }
     .clickable-word:hover {
-      color: #0056b3;
+      background-color: rgba(220, 220, 220, 1); /* Lighter gray with 50% opacity */
+      border-radius: 3px;
     }
   `;
   document.head.appendChild(style);
@@ -129,15 +124,32 @@ function showWordExplanation(word, explanation) {
   const popup = document.getElementById('lazy-lookup-popup');
   const explanationDiv = popup.querySelector('.word-explanation');
   
+  // Add hiragana reading if available
+  const wordWithReading = word.match(/[一-龯々]/g) ? `${word} (${getHiraganaReading(word)})` : word;
+
+  // Format the explanation
+  const formattedExplanation = explanation
+    .replace(/###\s+(.*)/g, '<h3>$1</h3>') // Convert ### to h3 tags
+    .replace(/\n+/g, ' ') // Replace multiple newlines with a single space
+    .replace(/\s+/g, ' ') // Replace multiple spaces with a single space
+    .trim(); // Remove leading and trailing whitespace
+
   explanationDiv.innerHTML = `
-    <h3>${word}</h3>
-    <p>${explanation}</p>
+    <h3>${wordWithReading}</h3>
+    <div>${formattedExplanation}</div>
   `;
 
   // Adjust popup height to fit new content
   popup.style.height = 'auto';
   popup.style.maxHeight = '80vh';
   popup.style.overflowY = 'auto';
+}
+
+// Helper function to get hiragana reading (you'll need to implement this)
+function getHiraganaReading(word) {
+  // This is a placeholder. You'll need to implement the actual conversion
+  // You might want to use a Japanese language processing library or API for this
+  return 'かんぜん'; // Example return
 }
 
 // Function to get word explanation from OpenAI

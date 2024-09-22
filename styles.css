@@ -78,33 +78,37 @@ p {
 }
 
 .lazy-lookup-popup .word-explanation h3 {
-  font-size: 16px;
+  font-size: 18px;
+  margin-top: 15px;
   margin-bottom: 5px;
 }
 
-.lazy-lookup-popup .word-explanation p {
-  font-size: 12px;
+.lazy-lookup-popup .word-explanation div {
+  font-size: 14px;
   line-height: 1.4;
 }
 
+.lazy-lookup-popup .word-explanation div p {
+  margin-bottom: 10px;
+}
+
 .clickable-word {
-  cursor: pointer;
-  text-decoration: underline;
-  color: #007bff;
-}
-
-.clickable-word:hover {
-  color: #0056b3;
-}
-
-.translated-word {
-  display: inline-block;
-  padding: 2px 4px;
+  display: inline;
   transition: background-color 0.3s ease, border-radius 0.3s ease;
   border-radius: 3px;
 }
 
+.clickable-word:hover {
+  background-color: rgba(220, 220, 220, 1); /* Lighter gray with 50% opacity */
+  border-radius: 3px;
+}
+
+.translated-word {
+  display: inline;
+  border-radius: 3px;
+}
+
 .translated-word:hover {
-  background-color: rgba(128, 128, 128, 0.3); /* Soft grey with 30% opacity  128, 128, 128, 0.3*/
+  background-color: rgba(255, 255, 255, 1); /* Soft grey with 30% opacity */
   border-radius: 3px;
 }
