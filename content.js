@@ -2,17 +2,36 @@
 
 let isPopupVisible = false;
 let tokenizer = null;
+let language, languageResponse, languageAbility;
 
-// Initialize Kuromoji tokenizer
-console.log("Kuromoji dictionary path:", chrome.runtime.getURL("dict/"));
-kuromoji.builder({ dicPath: chrome.runtime.getURL("dict/") }).build((err, _tokenizer) => {
-  if(err) {
-    console.error("Kuromoji initialization error:", err);
-  } else {
-    console.log("Kuromoji tokenizer initialized successfully");
-    tokenizer = _tokenizer;
-  }
-});
+// Add this function to fetch settings
+function fetchSettings() {
+  return new Promise((resolve) => {
+    chrome.storage.local.get(['language', 'languageResponse', 'languageAbility'], function(result) {
+      language = result.language || 'English';
+      languageResponse = result.languageResponse || 'English';
+      languageAbility = result.languageAbility || 'B1';
+      resolve();
+    });
+  });
+}
+
+// Modify the initialization to fetch settings before setting up the tokenizer
+async function initialize() {
+  await fetchSettings();
+  console.log("Kuromoji dictionary path:", chrome.runtime.getURL("dict/"));
+  kuromoji.builder({ dicPath: chrome.runtime.getURL("dict/") }).build((err, _tokenizer) => {
+    if(err) {
+      console.error("Kuromoji initialization error:", err);
+    } else {
+      console.log("Kuromoji tokenizer initialized successfully");
+      tokenizer = _tokenizer;
+    }
+  });
+}
+
+// Call initialize function
+initialize();
 
 // Function to create and show the translation popup
 function showTranslationPopup(originalText, translatedText) {
@@ -26,15 +45,10 @@ function showTranslationPopup(originalText, translatedText) {
   // Separate Japanese words and make them clickable
   const separatedOriginal = separateJapaneseWords(originalText);
   
-  // Wrap each word in the translated text with a span
-  const wrappedTranslatedText = translatedText.split(' ').map(word => 
-    `<span class="translated-word">${word}</span>`
-  ).join(' ');
-  
-  // Add original (with clickable words) and translated text
+  // Add original text and loading indicator for translation
   popup.innerHTML = `
     <div class="original-text">Original: ${separatedOriginal}</div>
-    <div class="translated-text">Translated: ${wrappedTranslatedText}</div>
+    <div class="translated-text">Translated: <div class="loading-container"><div class="loading"></div></div></div>
     <div class="word-explanation"></div>
   `;
 
@@ -92,8 +106,44 @@ function showTranslationPopup(originalText, translatedText) {
       background-color: rgba(220, 220, 220, 1); /* Lighter gray with 50% opacity */
       border-radius: 3px;
     }
+    .loading-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 40px;
+    }
+    .loading {
+      display: inline-block;
+      width: 30px;
+      height: 30px;
+      border: 3px solid #f3f3f3;
+      border-top: 3px solid #3498db;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
   `;
   document.head.appendChild(style);
+
+  // Update the popup with the translation when it's ready
+  if (translatedText) {
+    updateTranslation(translatedText);
+  }
+}
+
+// Function to update the translation in the popup
+function updateTranslation(translatedText) {
+  const popup = document.getElementById('lazy-lookup-popup');
+  if (popup) {
+    const translatedDiv = popup.querySelector('.translated-text');
+    const wrappedTranslatedText = translatedText.split(' ').map(word => 
+      `<span class="translated-word">${word}</span>`
+    ).join(' ');
+    translatedDiv.innerHTML = `Translated: ${wrappedTranslatedText}`;
+  }
 }
 
 // Function to separate Japanese words and wrap them in clickable spans
@@ -114,6 +164,7 @@ async function handleWordClick(event) {
   if (event.target.classList.contains('clickable-word')) {
     const word = event.target.textContent;
     const sentence = event.target.closest('.original-text').textContent;
+    showWordExplanation(word); // Show loading indicator
     const explanation = await getWordExplanation(word, sentence);
     showWordExplanation(word, explanation);
   }
@@ -127,17 +178,26 @@ function showWordExplanation(word, explanation) {
   // Add hiragana reading if available
   const wordWithReading = word.match(/[一-龯々]/g) ? `${word} (${getHiraganaReading(word)})` : word;
 
-  // Format the explanation
-  const formattedExplanation = explanation
-    .replace(/###\s+(.*)/g, '<h3>$1</h3>') // Convert ### to h3 tags
-    .replace(/\n+/g, ' ') // Replace multiple newlines with a single space
-    .replace(/\s+/g, ' ') // Replace multiple spaces with a single space
-    .trim(); // Remove leading and trailing whitespace
-
+  // Show loading indicator
   explanationDiv.innerHTML = `
     <h3>${wordWithReading}</h3>
-    <div>${formattedExplanation}</div>
+    <div class="loading-container"><div class="loading"></div></div>
   `;
+
+  // Format the explanation when it's ready
+  if (explanation) {
+    const formattedExplanation = explanation
+      .replace(/###\s+(.*)/g, '<h4>$1</h4>')
+      .replace(/##\s+(.*)/g, '<h4>$1</h4>')
+      .replace(/\n+/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
+
+    explanationDiv.innerHTML = `
+      <h4>${wordWithReading}</h4>
+      <div>${formattedExplanation}</div>
+    `;
+  }
 
   // Adjust popup height to fit new content
   popup.style.height = 'auto';
@@ -145,18 +205,24 @@ function showWordExplanation(word, explanation) {
   popup.style.overflowY = 'auto';
 }
 
-// Helper function to get hiragana reading (you'll need to implement this)
+// Helper function to get hiragana reading (implement this)
 function getHiraganaReading(word) {
-  // This is a placeholder. You'll need to implement the actual conversion
+  // This is a placeholder. implement the actual conversion
   // You might want to use a Japanese language processing library or API for this
   return 'かんぜん'; // Example return
 }
 
-// Function to get word explanation from OpenAI
+// Modify the getWordExplanation function to use the latest settings
 async function getWordExplanation(word, sentence) {
-  // Send message to background script to make API call
   return new Promise((resolve) => {
-    chrome.runtime.sendMessage({action: "explainWord", word: word, sentence: sentence}, (response) => {
+    chrome.runtime.sendMessage({
+      action: "explainWord", 
+      word: word, 
+      sentence: sentence,
+      language: language,
+      languageResponse: languageResponse,
+      languageAbility: languageAbility
+    }, (response) => {
       resolve(response.explanation);
     });
   });
@@ -178,8 +244,15 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     } else {
       const selectedText = window.getSelection().toString().trim();
       if (selectedText) {
-        chrome.runtime.sendMessage({action: "translateText", text: selectedText}, (response) => {
-          showTranslationPopup(selectedText, response.translatedText);
+        showTranslationPopup(selectedText);
+        chrome.runtime.sendMessage({
+          action: "translateText", 
+          text: selectedText,
+          language: language,
+          languageResponse: languageResponse,
+          languageAbility: languageAbility
+        }, (response) => {
+          updateTranslation(response.translatedText);
         });
       } else {
         console.log('No text selected');
