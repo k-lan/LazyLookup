@@ -47,8 +47,8 @@ function showTranslationPopup(originalText, translatedText) {
   
   // Add original text and loading indicator for translation
   popup.innerHTML = `
-    <div class="original-text">Original: ${separatedOriginal}</div>
-    <div class="translated-text">Translated: <div class="loading-container"><div class="loading"></div></div></div>
+    <div class="text-box original-text"><strong>Original:</strong> ${separatedOriginal}</div>
+    <div class="text-box translated-text"><strong>${languageResponse}:</strong> <div class="loading-container"><div class="loading"></div></div></div>
     <div class="word-explanation"></div>
   `;
 
@@ -93,6 +93,18 @@ function showTranslationPopup(originalText, translatedText) {
       font-size: 12px;
       padding: 5px 10px;
     }
+    .text-box {
+      background-color: rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      padding: 10px;
+      margin-bottom: 10px;
+    }
+    .explanation-section {
+      background-color: rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      padding: 10px;
+      margin-top: 10px;
+    }
     .translated-word {
       display: inline;
       border-radius: 3px;
@@ -103,7 +115,7 @@ function showTranslationPopup(originalText, translatedText) {
       border-radius: 3px;
     }
     .clickable-word:hover {
-      background-color: rgba(220, 220, 220, 1); /* Lighter gray with 50% opacity */
+      background-color: rgba(220, 220, 220, 0.5);
       border-radius: 3px;
     }
     .loading-container {
@@ -142,7 +154,7 @@ function updateTranslation(translatedText) {
     const wrappedTranslatedText = translatedText.split(' ').map(word => 
       `<span class="translated-word">${word}</span>`
     ).join(' ');
-    translatedDiv.innerHTML = `Translated: ${wrappedTranslatedText}`;
+    translatedDiv.innerHTML = `<strong>${languageResponse}:</strong> ${wrappedTranslatedText}`;
   }
 }
 
@@ -186,17 +198,27 @@ function showWordExplanation(word, explanation) {
 
   // Format the explanation when it's ready
   if (explanation) {
-    const formattedExplanation = explanation
-      .replace(/###\s+(.*)/g, '<h4>$1</h4>')
-      .replace(/##\s+(.*)/g, '<h4>$1</h4>')
-      .replace(/\n+/g, ' ')
-      .replace(/\s+/g, ' ')
-      .trim();
+    console.log("Raw explanation:", explanation);  // Log the raw explanation
+
+    const sections = explanation.split(/(?=##|###)/).filter(section => section.trim() !== '#');
+    
+    let formattedExplanation = sections.map(section => {
+      const [title, ...content] = section.split('\n');
+      if (title.trim().startsWith('#')) {
+        return `<div class="explanation-section">
+          <h4>${title.replace(/##|###/, '').trim()}</h4>
+          ${content.join('<br>').trim()}
+        </div>`;
+      }
+      return '';
+    }).join('');
 
     explanationDiv.innerHTML = `
       <h4>${wordWithReading}</h4>
-      <div>${formattedExplanation}</div>
+      ${formattedExplanation}
     `;
+
+    console.log("Formatted explanation HTML:", explanationDiv.innerHTML);  // Log the formatted HTML
   }
 
   // Adjust popup height to fit new content
