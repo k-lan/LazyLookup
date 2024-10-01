@@ -2,15 +2,16 @@
 
 let isPopupVisible = false;
 let tokenizer = null;
-let language, languageResponse, languageAbility;
+let language = 'Japanese';
+let languageResponse = 'English';
+let languageAbility = 'C2';
 
-// Add this function to fetch settings
 function fetchSettings() {
   return new Promise((resolve) => {
     chrome.storage.local.get(['language', 'languageResponse', 'languageAbility'], function(result) {
-      language = result.language || 'English';
+      language = result.language || 'Japanese';
       languageResponse = result.languageResponse || 'English';
-      languageAbility = result.languageAbility || 'B1';
+      languageAbility = result.languageAbility || 'C2';
       resolve();
     });
   });
@@ -48,7 +49,7 @@ function showTranslationPopup(originalText, translatedText) {
   // Add original text and loading indicator for translation
   popup.innerHTML = `
     <div class="text-box original-text"><strong>Original:</strong> ${separatedOriginal}</div>
-    <div class="text-box translated-text"><strong>${languageResponse}:</strong> <div class="loading-container"><div class="loading"></div></div></div>
+    <div class="text-box translated-text"><strong>${language === 'Japanese' ? 'English' : 'Japanese'}:</strong> <div class="loading-container"><div class="loading"></div></div></div>
     <div class="word-explanation"></div>
   `;
 
@@ -154,7 +155,7 @@ function updateTranslation(translatedText) {
     const wrappedTranslatedText = translatedText.split(' ').map(word => 
       `<span class="translated-word">${word}</span>`
     ).join(' ');
-    translatedDiv.innerHTML = `<strong>${languageResponse}:</strong> ${wrappedTranslatedText}`;
+    translatedDiv.innerHTML = `<strong>${language === 'Japanese' ? 'English' : 'Japanese'}:</strong> ${wrappedTranslatedText}`;
   }
 }
 
@@ -182,13 +183,14 @@ async function handleWordClick(event) {
   }
 }
 
-// Function to show word explanation
+// Modify the showWordExplanation function
 function showWordExplanation(word, explanation) {
   const popup = document.getElementById('lazy-lookup-popup');
   const explanationDiv = popup.querySelector('.word-explanation');
   
-  // Add hiragana reading if available
-  const wordWithReading = word.match(/[一-龯々]/g) ? `${word} (${getHiraganaReading(word)})` : word;
+  // Get the reading for the word
+  const reading = getKanjiReading(word);
+  const wordWithReading = reading ? `${word} (${reading})` : word;
 
   // Show loading indicator
   explanationDiv.innerHTML = `
@@ -227,12 +229,19 @@ function showWordExplanation(word, explanation) {
   popup.style.overflowY = 'auto';
 }
 
-// Helper function to get hiragana reading (implement this)
-function getHiraganaReading(word) {
-  // This is a placeholder. implement the actual conversion
-  // You might want to use a Japanese language processing library or API for this
-  return 'かんぜん'; // Example return
+// New function to get kanji readings using kuromoji
+function getKanjiReading(word) {
+  if (!tokenizer) {
+    console.warn("Tokenizer not initialized, cannot get kanji reading");
+    return null;
+  }
+
+  const tokens = tokenizer.tokenize(word);
+  return tokens.map(token => token.reading).join('');
 }
+
+// Remove the unused getHiraganaReading function
+// function getHiraganaReading(word) { ... }
 
 // Modify the getWordExplanation function to use the latest settings
 async function getWordExplanation(word, sentence) {

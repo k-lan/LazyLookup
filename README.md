@@ -37,12 +37,10 @@ LazyLookup is a Chrome extension designed to help language learners, particularl
 - [x] Add support for other language pairs
 - [x] Improve UI/UX of the popup window
 - [ ] Implement a history feature to review past translations???
-- [ ] Add support for text-to-speech for pronunciation practice
+- [ ] Add support for text-to-speech for pronunciation practice???
 - [x] Fix word hover in the popup window
-- [ ] Correctly display the hiragana reading of the selected word
+- [x] Correctly display the hiragana reading of the selected word
 - [x] Show loading icons when waiting for API responses. Maybe text streaming for word explanations?
-- [ ] Get rid of Kuromoji.js, match to the longest result in the dictionary, we want the longest matches.
-- [ ] Fix bug related to the settings not always properly displaying correct language.
 
 ## Credits
 

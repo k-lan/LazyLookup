@@ -21,7 +21,7 @@ chrome.commands.onCommand.addListener((command) => {
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.action === "translateText") {
-    translateText(request.text, request.language, request.languageResponse, request.languageAbility)
+    translateText(request.text, request.language, request.languageResponse)
       .then(translatedText => sendResponse({ translatedText }))
       .catch(error => sendResponse({ error: error.message }));
     return true;
@@ -33,7 +33,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   }
 });
 
-async function translateText(text, language, languageResponse, languageAbility) {
+async function translateText(text, language, languageResponse) {
   try {
     console.log('Attempting to translate:', text);
     console.log('Using API key:', OPENAI_API_KEY.substring(0, 5) + '...');
@@ -74,7 +74,7 @@ async function translateText(text, language, languageResponse, languageAbility) 
 }
 
 async function explainWord(word, sentence, language, languageResponse, languageAbility) {
-    console.log('Attempting to explain word:', word, 'in sentence:', sentence);
+  console.log('Attempting to explain word:', word, 'in sentence:', sentence);
   try {
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
